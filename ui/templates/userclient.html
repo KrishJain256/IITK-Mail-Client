@@ -1,0 +1,414 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>IITK Mail Client</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            color : #c5d1d3;
+            background-color : #21292c;
+        }
+
+        .column {
+            float: left;
+            padding: 10px;
+        }
+
+        .inboxview {
+            width: 25%;
+        }
+
+        .messageview {
+            width: 75%;
+        }
+
+        .mailbox{
+            border: 1px solid #425257;
+            padding: 15px;
+            width: 100%;
+        }
+
+        .header{
+            text-align: center;
+            border: 1px solid #425257;
+            padding: 8px;
+        }
+
+        .name{
+            font-weight: bold;
+            left: 0;
+            margin-top: 1px;
+        }
+
+        .time{
+            float:right;
+            right: 0;
+        }
+
+        .subject{
+            margin-top:2px;
+            font-size:1.3em;
+        }
+
+        .mailrow{
+
+            border: 1px solid #425257;
+        }
+
+        .compose{
+            width: 100%;
+            padding: 10px;
+            background-color: #086c9c;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.1s;
+            font-size: 1.5em;
+        }
+
+        .compose:hover{
+            background-color: #087cb4;
+        }
+
+        .subjectmessage{
+            font-size: 1.5em;
+        }
+
+        .lines{
+            background-color: #425257;
+        }
+
+        .closecompose{
+            width: 100%;
+            padding: 10px;
+            background-color: #086c9c;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.1s;
+            font-size: 1.5em;
+            margin-top:5px;
+        }
+
+        .closecompose:hover{
+            background-color: #087cb4;
+        }
+
+
+    </style>
+    <script>
+        fetch('http://127.0.0.1:8000/ui/messages/')
+            .then((response) => response.json())
+            .then((json) => messagejson = json);
+
+    </script>
+
+</head>
+<body>
+    <div class="row">
+  <div class="column inboxview">
+    <div>
+        <table class="mailbox">
+            <thead>
+                    <div class="header">
+                        INBOX
+                    </div>
+            </thead>
+            <tbody>
+                <script>
+                    var ind = 0;
+
+
+                </script>
+
+                {% if emails %}
+                {% for email in emails %}
+                <script>
+                    console.log(ind);
+                </script>
+                    <tr onclick="showmail({{ forloop.counter0 }})" class="mailrow">
+                        <table onclick="showmail({{ forloop.counter0 }})">
+                            <tr onclick="showmail({{ forloop.counter0 }})">
+                                <div onclick="showmail({{ forloop.counter0 }})">
+                                    <div class="name">
+                                        <span>{{email.sender}}</span>
+                                    </div>
+                                    <div class="time">
+                                        <span>{{email.date_time}}</span>
+                                    </div>
+                                </div>
+                            </tr>
+                        </table>
+                        <table onclick="showmail({{ forloop.counter0 }})">
+                            <tr onclick="showmail({{ forloop.counter0 }})">
+                                <div class="subject" onclick="showmail({{ forloop.counter0 }})">
+                                    <span>{{email.subject}}</span>
+                                </div>
+                            </tr>
+                        </table>
+                    </tr>
+                    <hr class="lines" color="#425257">
+                <script>
+                    ind = ind + 1;
+                </script>
+                {% endfor %}
+                {% else %}
+                    <tr>
+                        <div>
+                            No emails to show....
+                        </div>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+  </div>
+  <div class="column messageview" id="messagebox">
+    <table>
+        <thead>
+            <div class="header" id="composebox">
+                <a id="handlecompose">
+                    <button class="compose" onclick="opencompose()">
+                        + Compose
+                    </button>
+                </a>
+            </div>
+            <hr class="lines" color="#425257">
+        </thead>
+        <tbody id="message">
+            <tr>
+                <div class="subjectmessage" id="subjectmessage">
+                    {{email.subject}}
+                </div>
+            </tr>
+            <tr>
+                <div style="float:left;" id="usericon">
+                </div>
+                <table>
+                    <tr>
+                        <div>
+                            <div class="name" id="sendermessage">
+                                <span>{{email.sender}}</span>
+                            </div>
+                            <div id="timemessage">
+                                <span>{{email.date_time}}</span>
+                            </div>
+                        </div>
+                    </tr>
+                </table>
+            </tr>
+            <tr>
+                <div id="messagebody">
+                    {{email.body}}
+                </div>
+            </tr>
+        </tbody>
+    </table>
+  </div>
+</div>
+<script type="text/javascript">
+        function showmail(i) {
+
+            document.getElementById("subjectmessage").innerHTML = messagejson[i].subject;
+<!--            document.getElementById("usericon").innerHTML = <img src = "{% static "images/usericon.png" %}">;-->
+            document.getElementById("sendermessage").innerHTML = messagejson[i].sender;
+            document.getElementById("timemessage").innerHTML = messagejson[i].date_time;
+            document.getElementById("messagebody").innerHTML = messagejson[i].body;
+        }
+
+        function opencompose() {
+            document.getElementById("composebox").innerHTML +=
+             ` <iframe src="http://127.0.0.1:8000/ui/userclient/compose/" width="100%" height="620px" style="margin-top:10px;"></iframe>`;
+            document.getElementById("handlecompose").innerHTML +=
+             `<button class="closecompose" onclick="closecompose()">
+                        Close Compose
+                    </button>
+             `
+        }
+
+        function closecompose() {
+            document.getElementById("composebox").innerHTML =
+            `<a id="handlecompose">
+                    <button class="compose" onclick="opencompose()">
+                        + Compose
+                    </button>
+                </a>`
+        }
+        </script>
+
+</body>
+</html>
+
+<!--{% load static %}-->
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">-->
+<!--    <title>IITK Mail Client</title>-->
+<!--    <style>-->
+<!--        * {-->
+<!--            box-sizing: border-box;-->
+<!--            color : #C5D1D3;-->
+<!--            background-color : #21292C;-->
+<!--        }-->
+<!--        .column {-->
+<!--            float: left;-->
+<!--            padding: 10px;-->
+<!--        }-->
+<!--        .inboxview {-->
+<!--            width: 25%;-->
+<!--        }-->
+<!--        .messageview {-->
+<!--            width: 75%;-->
+<!--        }-->
+<!--        .mailbox{-->
+<!--            border: 1px solid #425257;-->
+<!--            padding: 15px;-->
+<!--            width: 100%;-->
+<!--        }-->
+<!--        .header{-->
+<!--            text-align: center;-->
+<!--            border: 1px solid #425257;-->
+<!--            padding: 8px;-->
+<!--        }-->
+<!--        .name{-->
+<!--            font-weight: bold;-->
+<!--            left: 0;-->
+<!--            margin-top: 1px;-->
+<!--        }-->
+<!--        .time{-->
+<!--            float:right;-->
+<!--            right: 0;-->
+<!--        }-->
+<!--        .subject{-->
+<!--            margin-top:2px;-->
+<!--            font-size:1.3em;-->
+<!--        }-->
+<!--        .mailrow{-->
+<!--            border: 1px solid #425257;-->
+<!--        }-->
+<!--        .compose{-->
+<!--            width: 100%;-->
+<!--            padding: 10px;-->
+<!--            background-color: #086C9C;-->
+<!--            border: none;-->
+<!--            border-radius: 4px;-->
+<!--            cursor: pointer;-->
+<!--            transition: background-color 0.1s;-->
+<!--            font-size: 1.5em;-->
+<!--        }-->
+<!--        .compose:hover{-->
+<!--            background-color: #087CB4;-->
+<!--        }-->
+<!--        .subjectmessage{-->
+<!--            font-size: 1.5em;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <div class="row">-->
+<!--  <div class="column inboxview">-->
+<!--    <div>-->
+<!--        <table class="mailbox">-->
+<!--            <thead>-->
+<!--                    <div class="header">-->
+<!--                        INBOX-->
+<!--                    </div>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--                {% if emails %}-->
+<!--                {% for email in emails %}-->
+<!--                    <tr class="mailrow" onclick="click({{ emails_json|safe }})" class="mailrow">-->
+<!--                        <table >-->
+<!--                            <tr >-->
+<!--                                <div >-->
+<!--                                    <div class="name">-->
+<!--                                        <span>{{email.sender}}</span>-->
+<!--                                    </div>-->
+<!--                                    <div class="time">-->
+<!--                                        <span>{{email.date_time}}</span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </tr>-->
+<!--                        </table>-->
+<!--                        <table>-->
+<!--                            <tr onclick="click({{ emails_json|safe }})">-->
+<!--                                <div class="subject">-->
+<!--                                    <span>{{email.subject}}</span>-->
+<!--                                </div>-->
+<!--                            </tr>-->
+<!--                        </table>-->
+<!--                    </tr>-->
+<!--                {% endfor %}-->
+<!--                {% else %}-->
+<!--                    <tr>-->
+<!--                        <div>-->
+<!--                            No emails to show....-->
+<!--                        </div>-->
+<!--                    </tr>-->
+<!--                {% endif %}-->
+<!--            </tbody>-->
+<!--        </table>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  <div class="column messageview" id="messagebox">-->
+<!--    <table>-->
+<!--        <thead>-->
+<!--            <div class="header">-->
+<!--                <a>-->
+<!--                    <button class="compose">-->
+<!--                        + Compose-->
+<!--                    </button>-->
+<!--                </a>-->
+<!--            </div>-->
+<!--        </thead>-->
+<!--        <tbody id="message">-->
+<!--            <tr>-->
+<!--                <div class="subjectmessage" id="subjectmessage">-->
+<!--                    {{email.subject}}-->
+<!--                </div>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <div style="float:left;" id="usericon">-->
+<!--                </div>-->
+<!--                <table>-->
+<!--                    <tr>-->
+<!--                        <div>-->
+<!--                            <div class="name" id="sendermessage">-->
+<!--                                <span>{{email.sender}}</span>-->
+<!--                            </div>-->
+<!--                            <div id="timemessage">-->
+<!--                                <span>{{email.date_time}}</span>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </tr>-->
+<!--                </table>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <div id="messagebody">-->
+<!--                    {{email.body}}-->
+<!--                </div>-->
+<!--            </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--  </div>-->
+<!--</div>-->
+<!--<script type="text/javascript">-->
+<!--        function click(email) {-->
+<!--            document.getElementById("subjectmessage").innerHTML = email.subject;-->
+<!--            // document.getElementById("usericon").innerHTML = <img src = "{% static 'images/usericon.png' %}"/>;-->
+<!--            document.getElementById("sendermessage").innerHTML = email.sender;-->
+<!--            document.getElementById("timemessage").innerHTML = email.date_time;-->
+<!--            document.getElementById("messagebody").innerHTML = email.body;-->
+<!--        }-->
+<!--        fetch('data.json')-->
+<!--        .then(response => response.json()) // Parse JSON response-->
+<!--        .then(data => {-->
+<!--            data.forEach(email => click(email));-->
+<!--        })-->
+<!--        .catch(error => console.error('Error fetching JSON:', error));-->
+<!--    </script>-->
+<!--</body>-->
+<!--</html>-->
