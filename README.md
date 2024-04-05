@@ -21,6 +21,7 @@ Install [MySQL](https://dev.mysql.com/downloads/installer/) for your device
 ### Step 5 :
 Open a terminal window in the ui/mysql_helper/ directory and enter the following command.
 This will start to setup MySQL for the mail client.
+
 Also, you would need to change some parameters on basis of your configuration of MySQL i.e. MySQL password.
 In the mailclient/ directory, you will find a settings.py file. Onen the file and search for 
 ```
@@ -45,6 +46,7 @@ Here, you will need to replace the same password. Also in the same directory, op
 con = mysql.connector.connect(host="localhost", user="root", passwd="{YOUR_PASSWORD}", database="mailclient")
 ```
 In this file, you will find this line 3 times, you need to replace your password here too.
+
 Now, we are ready to proceed further.
 ```
 python dbconnect.py estabilish_connection
