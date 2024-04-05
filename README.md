@@ -20,7 +20,32 @@ Install [MySQL](https://dev.mysql.com/downloads/installer/) for your device
 
 ### Step 5 :
 Open a terminal window in the ui/mysql_helper/ directory and enter the following command.
-This will start to setup MySQL for the mail client
+This will start to setup MySQL for the mail client.
+Also, you would need to change some parameters on basis of your configuration of MySQL i.e. MySQL password.
+In the mailclient/ directory, you will find a settings.py file. Onen the file and search for 
+```
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mailclient',
+        'USER': 'root',
+        'PASSWORD': '{ENTER_YOUR_PASSWORD}',
+        'HOST':'localhost',
+        'PORT':'3306',
+    }
+}
+```
+Here, replace the <code>{ENTER_YOUR_PASSWORD}</code> with your actual MySQL password.
+Also, in the ui/mysql_helper/ directory, you need to open dbconnect.py
+```
+con = mysql.connector.connect(host="localhost", user="root", passwd="{YOUR_PASSWORD}")
+```
+Here, you will need to replace the same password. Also in the same directory, open user_functions.py
+```
+con = mysql.connector.connect(host="localhost", user="root", passwd="{YOUR_PASSWORD}", database="mailclient")
+```
+In this file, you will find this line 3 times, you need to replace your password here too.
+Now, we are ready to proceed further.
 ```
 python dbconnect.py estabilish_connection
 ```
